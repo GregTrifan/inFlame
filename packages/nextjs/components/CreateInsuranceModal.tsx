@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { parseEther } from "viem";
 import { useAccount } from "wagmi";
@@ -83,7 +83,7 @@ const CreateInsuranceModal: React.FC<CreateInsuranceModalProps> = ({ isOpen, onC
       console.error("All fields are mandatory.");
     }
   };
-
+  const monthlyCost = formData.houseValue ? (Number(formData.houseValue) * 0.00083).toFixed(4) : "0.0000";
   if (!isOpen) return null;
 
   return (
@@ -152,7 +152,7 @@ const CreateInsuranceModal: React.FC<CreateInsuranceModalProps> = ({ isOpen, onC
             />
           </div>
           <button type="submit" className={`btn btn-accent w-full ${loading ? "btn-loading" : ""}`} disabled={loading}>
-            {loading ? "Submitting..." : "Submit"}
+            {loading ? "Submitting..." : `Submit - ${monthlyCost} ETH / month`}
           </button>
         </form>
       </div>

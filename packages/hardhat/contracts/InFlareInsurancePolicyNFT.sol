@@ -30,7 +30,7 @@ contract InFlameInsurancePolicyNFT is ERC4907, Ownable {
 	) external payable {
 		require(msg.value > 0, "Must send ETH to issue a policy");
 
-		uint256 monthlyRate = (houseValue * 83) / 1000; // Fixed multiplication
+		uint256 monthlyRate = (houseValue * 83) / 100000; // Fixed multiplication
 		require(msg.value >= monthlyRate, "Insufficient ETH sent");
 
 		uint256 tokenId = _nextTokenId++;
@@ -59,7 +59,6 @@ contract InFlameInsurancePolicyNFT is ERC4907, Ownable {
 		uint64 newExpiration = uint64(block.timestamp + 30 days);
 		setUser(tokenId, msg.sender, newExpiration); // Use the ERC4907 function
 
-		// Funds are kept in the contract, no vault to transfer to
 		emit PolicyIssued(tokenId, msg.sender, newExpiration);
 	}
 
@@ -69,13 +68,12 @@ contract InFlameInsurancePolicyNFT is ERC4907, Ownable {
 
 		emit ClaimInitiated(tokenId, msg.sender);
 
-		// Dummy verification logic - implement your own as needed
 		bool isValidClaim = true; // Placeholder for real claim verification
 
 		emit ClaimVerified(tokenId, isValidClaim);
 
 		if (isValidClaim) {
-			uint256 payoutAmount = policies[tokenId].monthlyRate; // Example payout logic
+			uint256 payoutAmount = policies[tokenId].monthlyRate;
 			require(
 				address(this).balance >= payoutAmount,
 				"Insufficient balance for payout"
@@ -88,6 +86,23 @@ contract InFlameInsurancePolicyNFT is ERC4907, Ownable {
 		} else {
 			revert("Claim verification failed");
 		}
+	}
+
+	// Function to get all token IDs owned by a specific address
+	function tokensOfOwner(
+		address owner
+	) external view returns (uint256[] memory) {
+		uint256 balance = balanceOf(owner);
+		uint256[] memory tokenIds = new uint256[](balance);
+		uint256 counter = 0;
+
+		for (uint256 tokenId = 0; tokenId < _nextTokenId; tokenId++) {
+			if (ownerOf(tokenId) == owner) {
+				tokenIds[counter] = tokenId;
+				counter++;
+			}
+		}
+		return tokenIds;
 	}
 
 	// Function to withdraw contract balance for the owner (optional)
