@@ -2,6 +2,31 @@
 
 InFlame is a proof-of-concept house insurance app where users can protect their property with a subscription tied to an ERC4907 NFT. Through Flare's Data Connector (FDC), we aim to automate verification and approval/denial of insurance claims, pulling data from a reputable source (and for demo purposes, we’re mostly saying “yes” to claims for now! ^^).
 
+## Technical Overview
+
+The inFlame insurance platform uses smart contracts and oracles to implement a decentralized house insurance model on Flare, enhanced by Flare's Data Connector (FDC) for reliable claim verification.
+
+#### Core Components
+
+##### Insurance Policy Contract (InFlameInsurancePolicyNFT):
+
+ERC4907 NFT: Policies are represented as NFTs that store user-specific insurance details such as house value, address, monthly premium rate, and policy expiration.
+Policy Issuance: Users issue a policy by sending ETH (calculated as a monthly rate based on 0.083% of the house value), which generates a new policy NFT.
+Policy Renewal: Policies can be renewed monthly; the contract verifies ownership and funds before extending the expiration.
+Claims Processing:
+Users can initiate a claim if the policy is active. Claims are validated through the FDC, which checks against curated data sources.
+Verified claims are emitted with events for further processing by the InFlameInsuranceVault.
+
+##### Insurance Vault Contract (InFlameInsuranceVault):
+
+ETH Deposit Management: Holds funds to process verified claims. Balances are tracked and can be withdrawn by the contract owner as needed.
+Claim Payouts: Calculates and distributes funds to claimants based on validation. Payout amounts are based on policy-specific data or preset calculations for this proof-of-concept.
+
+##### Flare Data Connector (FDC) Integration
+
+Claim Validation: When a user initiates a claim, the FDC consults designated data sources to confirm the details (e.g., house value, damage reports, or relevant news).
+Oracle Integration: The FDC could be extended to work with optimistic oracles (such as UMA) for further validation layers or for claim disputes, integrating off-chain data and enhancing trust in the verification process.
+
 ## Our next steps
 
 Although within the ETHLondon '24 schedule we didn't manage to have too many features/verification layers going on in the app, we'd love to keep going with this project and:
